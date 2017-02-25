@@ -1,0 +1,104 @@
+ext.versionFile = file('version.properties')
+
+task loadVersion(group: 'versioning', description: 'Load version from properties file.') {
+    project.version = readVersion()
+}
+
+task printVersion(group: 'versioning', description: 'Prints version.') {
+    doLast {
+        logger.quiet "Version: $version"
+    }
+}
+
+task incrementMajorVersion(group: 'versioning', description: 'Increments major version.') {
+    inputs.property('major', version.major)
+    outputs.file versionFile
+
+    doLast {
+        ++version.major
+        version.minor = 0
+        version.build = 0
+        version.release = false
+        saveVersion()
+    }
+}
+
+task incrementMinorVersion(group: 'versioning', description: 'Increments minor version.') {
+    inputs.property('minor', version.minor)
+    outputs.file versionFile
+
+    doLast {
+        ++version.minor
+        version.build = 0
+        version.release = false
+        saveVersion()
+    }
+}
+
+task makeReleaseVersion(group: 'versioning', description: 'Sets release version.') {
+    inputs.property('release', version.release)
+    outputs.file versionFile
+
+    doLast {
+        version.release = true
+        ++version.build
+        saveVersion()
+    }
+}
+
+task makeSnapshot(group: 'versioning', description: 'Sets release version.') {
+    inputs.property('release', version.release)
+    outputs.file versionFile
+
+    doLast {
+        version.release = false
+        saveVersion()
+    }
+}
+
+class ProjectVersion {
+    Integer major
+    Integer minor
+    Integer build
+    Boolean release
+
+    ProjectVersion(Integer major, Integer minor, Integer build) {
+        this.major = major
+        this.minor = minor
+        this.build = build
+        this.release = Boolean.FALSE
+    }
+
+    ProjectVersion(Integer major, Integer minor, Integer build, Boolean release) {
+        this(major, minor, build)
+        this.release = release
+    }
+
+    @Override
+    String toString() {
+        "$major.$minor.$build${release ? '' : '-SNAPSHOT'}"
+    }
+}
+
+private ProjectVersion readVersion() {
+    if (!versionFile.exists()) {
+        throw new GradleException("Required version file does not exit: $versionFile.canonicalPath")
+    }
+
+    Properties versionProps = new Properties()
+    versionFile.withInputStream { stream -> versionProps.load(stream) }
+    new ProjectVersion(
+            versionProps.major.toInteger(),
+            versionProps.minor.toInteger(),
+            versionProps.build.toInteger(),
+            versionProps.release.toBoolean())
+}
+
+private saveVersion() {
+    ant.propertyfile(file: versionFile) {
+        entry(key: 'major', type: 'int', operation: '=', value: version.major)
+        entry(key: 'minor', type: 'int', operation: '=', value: version.minor)
+        entry(key: 'build', type: 'int', operation: '=', value: version.build)
+        entry(key: 'release', type: 'string', operation: '=', value: version.release)
+    }
+}

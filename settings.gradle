@@ -1,0 +1,6 @@
+include 'model'
+include 'application'
+include 'web'
+include 'infrastructure'
+include 'plugins'
+
