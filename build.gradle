@@ -4,6 +4,7 @@ ext.configDir = new File(rootDir, 'config')
 
 subprojects {
     apply plugin: 'java'
+    apply plugin: "org.sonarqube"
 
     apply from: "$configDir/jacoco/jacoco.gradle"
     apply from: "$configDir/checkstyle/checkstyle.gradle"
