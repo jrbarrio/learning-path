@@ -2,14 +2,14 @@ apply plugin: 'jdepend'
 
 jdependMain {
     reports {
-        xml.enabled false
-        text.enabled true
+        xml.enabled true
+        text.enabled false
     }
 }
 
 jdependTest {
     reports {
-        xml.enabled false
-        text.enabled true
+        xml.enabled true
+        text.enabled false
     }
 }
