@@ -1,0 +1,15 @@
+apply plugin: 'pmd'
+
+pmdMain {
+    reports {
+        xml.enabled false
+        html.enabled true
+    }
+}
+
+pmdTest {
+    reports {
+        xml.enabled false
+        html.enabled true
+    }
+}

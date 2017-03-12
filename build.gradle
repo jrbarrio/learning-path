@@ -7,6 +7,10 @@ subprojects {
 
     apply from: "$configDir/jacoco/jacoco.gradle"
     apply from: "$configDir/checkstyle/checkstyle.gradle"
+    apply from: "$configDir/findbugs/findbugs.gradle"
+    apply from: "$configDir/jdepend/jdepend.gradle"
+    apply from: "$configDir/pmd/pmd.gradle"
+
 
     sourceCompatibility = 1.8
 
